@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+DIRECTORY=$(cd `dirname $0` && pwd)
+source $DIRECTORY/setup.bash
+exec python $@

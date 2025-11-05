@@ -1,1 +1,55 @@
-*
+* robot-nix : dev/deploy env. for ros2 + ml
+
+** requirements
+- [[https://nixos.org/download/][Nix]] w/ nix-command flakes enabled.
+- [[https://github.com/nix-community/nixGL][NixGL]] (optional, for CUDA on non-NixOS machines)
+- [[https://github.com/nix-community/nix-direnv?tab=readme-ov-file#flakes-support][nix-direnv]] (optional, for caching nix-shell)
+- Docker/Podman w/ Nvidia CTK (optional)
+
+** ros + ml env. with nix-flakes
+#+BEGIN_SRC shell
+  > git clone https://github.com/akssri/nix-robotml.git
+  > cd nix-robotml
+  > nix develop # use .#ros or .#ml suffix for ros/ml-only env.
+  ...
+  > ros2 topic list
+  > python -c 'import jax.numpy as jnp' # nixGL <command> (for CUDA, on non-NixOS)
+#+END_SRC
+
+** development
+Nix is declarative and lacks a package manager, ergo rosdep cannot work like it does on Ubuntu.
+Therefore, we need to use this workaround,
+
+[KN]: Nix ಪ್ರತಿಜ್ಞಾತ್ಮಕವಾಗಿರುವುದರಿಂದ (declarative) ಮತ್ತು ಪ್ಯಾಕೇಜ್-ಮ್ಯಾನೇಜರ್ ಇಲ್ಲದಿರುವದರಿಂದ, rosdep Ubuntu-ವಿನಂತೆ ಕೆಲಸ ಮಾಡಲಾರುದು.
+ಅದಕ್ಕಾಗಿ ನಾವು ಈ ಉಪಾಯವನ್ನು ಬಳಸಬೇಕು,
+
+[HI]: Nix प्रतिज्ञात्मक होने की कारण (declarative) और इसमें पैकेज-मैनेजर न होने की कारण, rosdep Ubuntu की तरह काम नहीं कर सकता।
+इसलिए हमें यह उपाय अपनाना होगा,
+
+#+BEGIN_SRC shell
+  > cd ros_ws/
+  > rosdep keys --from-paths src --ignore-src | sed "s|_|-|g"
+  backward-ros
+  control-msgs
+  ament-cmake-clang-format
+  rsl
+  moveit-kinematics
+  joint-state-broadcaster
+  controller-interface
+  joint-state-publisher
+  robot-state-publisher
+  ...
+  > # PASTE output into ros-shell.nix; rebuild env.
+  > colcon build <args>
+#+END_SRC
+
+** nix env. -> container
+#+BEGIN_SRC shell
+  > nix build .#docker.x86_64-linux
+  > podman load < result
+  > podman run -it --rm --device nvidia.com/gpu=all localhost/nix-ros bash
+#+END_SRC
+
+** acknowledgements
+- [[https://github.com/lopsided98/nix-ros-overlay/][nix-ros-overlay]]
+- [[https://www.youtube.com/watch?v=5XY3K8DH55M][OpenTechLab: Nix-powered Docker Containers]]

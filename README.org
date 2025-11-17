@@ -1,5 +1,17 @@
 * robot-nix : dev/deploy env. for ros2 + ml
 
+Robotics + ML development is not simple. Frameworks like ROS require Ubuntu or Docker.
+ML requires a CUDA setup along with Python dependencies, necessitating venv or Docker.
+Combining these two is even more troublesome.
+
+Nix flake shells offer a better solution.
+
+Not only do you get a shell/environment on your local machine like venv without any of
+the development barriers put up by containerization, but these shells also easily containerize
+from the ground up for quick and reliable deployment (without depending on any base image!).
+
+The repo below is a cleaned-up version of the recipes I use.
+
 ** requirements
 - [[https://nixos.org/download/][Nix]] w/ nix-command flakes enabled.
 - [[https://github.com/nix-community/nixGL][NixGL]] (optional, for CUDA on non-NixOS machines)

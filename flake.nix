@@ -144,7 +144,7 @@
         devShells.ipython = mergeEnvs [ros-env ml-env (pkgs.mkShell {shellHook = "ipython";}) ];
         # nix build .#docker.x86_64-linux
         # podman load < result
-        # podman run -it --rm --device nvidia.com/gpu=all localhost/nix-ros bash
+        # podman run -it --rm --device nvidia.com/gpu=all localhost/nix-ros-ml bash
         docker-ml = docker_fn ml-env "nix-ml";
         docker-ros = docker_fn ros-env "nix-ros";
         docker = docker_fn merge-env "nix-ros-ml";

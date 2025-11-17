@@ -59,7 +59,7 @@ Therefore, we need to use this workaround,
 #+BEGIN_SRC shell
   > nix build .#docker.x86_64-linux
   > podman load < result
-  > podman run -it --rm --device nvidia.com/gpu=all localhost/nix-ros bash
+  > podman run -it --rm --device nvidia.com/gpu=all localhost/nix-ros-ml bash
 #+END_SRC
 
 ** acknowledgements
